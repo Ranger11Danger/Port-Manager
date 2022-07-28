@@ -3,7 +3,8 @@ import threading
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-p",metavar="port", type=int ,required=True, help="Port to listen for connections on")
+parser.add_argument("-p", metavar="port", type=int ,required=True, help="Port to listen for connections on")
+parser.add_argument('-ip', metavar='ipaddress', type=str, help="IPAddress to listen on", default="127.0.0.1")
 args = parser.parse_args()
 
 def forward(src, dst):
@@ -15,11 +16,11 @@ def main():
     s = socket.socket()
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     try:
-        s.bind(('127.0.0.1', args.p))
+        s.bind((args.ip, args.p))
         s.listen(5)
-        print(f"[+] Listening for connections on 127.0.0.1:{args.p}")
+        print(f"[+] Listening for connections on {args.ip}:{args.p}")
     except:
-        print(f"[+] Unable to bind to 127.0.0.1:{args.p}")
+        print(f"[+] Unable to bind to {args.ip}:{args.p}")
 
 
     while True:
@@ -54,7 +55,7 @@ def main():
             Thread2.daemon = True
             Thread1.start()
             Thread2.start()
-            print(f"[+] Forwarding connection from 127.0.0.1:{args.p} -> {address[0]}:{address[1]}")
+            print(f"[+] Forwarding connection from {args.ip}:{args.p} -> {address[0]}:{address[1]}")
         else:
             print("[+] Dropping Connection...")
             client_socket.close()
